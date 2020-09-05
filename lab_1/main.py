@@ -20,41 +20,51 @@ def is_capital(letter):
     return 'A' <= letter <= 'Z'
 
 
+def get_basis(is_caps):
+    return 'A' if is_caps else 'a'
+
+
 def normalize_size(letter, is_caps):
-    basis = 'A' if is_caps else 'a'
+    basis = get_basis(is_caps)
     return chr(((ord(letter) - ord(basis)) % 26) + ord(basis))
 
 
 def vigenere_shift(letter, is_caps):
-    return ord(letter) - ord('A' if is_caps else 'a')
+    return ord(letter) - ord(get_basis(is_caps))
 
 
 def cesar(array, shift, enc=True):
+    answer = []
     for i in range(len(array)):
         if is_letter(array[i]):
             is_caps = is_capital(array[i])
-            array[i] = normalize_size(chr(ord(array[i]) + (shift if enc else -shift)), is_caps)
-    return array
+            answer.append(normalize_size(chr(ord(array[i]) + (shift if enc else -shift)), is_caps))
+        else:
+            answer.append(array[i])
+    return answer
 
 
 def vigenere(array, key, enc=True):
     key_length = len(key)
-    key_list = list(map(lambda x: {'chr': x, 'is_capital': is_capital(x)}, key))
+    key_list = list(map(lambda x: {'chr': x, 'is_caps': is_capital(x)}, key))
+    answer = []
     for i in range(len(array)):
         if is_letter(array[i]):
             is_caps = is_capital(array[i])
-            shift = vigenere_shift(key_list[i % key_length]['chr'], key_list[i % key_length]['is_capital'])
-            array[i] = normalize_size(chr(ord(array[i]) + (shift if enc else -shift)), is_caps)
-    return array
+            shift = vigenere_shift(key_list[i % key_length]['chr'], key_list[i % key_length]['is_caps'])
+            answer.append(normalize_size(chr(ord(array[i]) + (shift if enc else -shift)), is_caps))
+        else:
+            answer.append(array[i])
+    return answer
 
 
 input_characters = read_file('resources/input1.txt')
 
 # vigenere
-# encrypted = vigenere(input_characters, 'moUsE')
-# print(encrypted)
-# decrypted = vigenere(encrypted, 'moUsE', False)
-# print(decrypted)
+encrypted = vigenere(input_characters, 'moUsE')
+print(encrypted)
+decrypted = vigenere(encrypted, 'moUsE', False)
+print(decrypted)
 
 # cesar
 encrypted = cesar(input_characters, 3)
