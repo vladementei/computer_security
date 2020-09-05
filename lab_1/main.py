@@ -12,20 +12,15 @@ def write_file(path, content):
     file.close()
 
 
-def encrypt(array):
+def encrypt_cesar(array, shift):
     for i in range(len(array)):
-        array[i] = chr((ord(array[i]) + 3) % 256)
-    return array
-
-
-def decrypt(array):
-    for i in range(len(array)):
-        array[i] = chr((ord(array[i]) - 3) % 256)
+        array[i] = chr((ord(array[i]) + shift) % 256)
     return array
 
 
 input_characters = read_file('resources/input1.txt')
-encrypted = encrypt(input_characters)
-decrypted = decrypt(encrypted)
+encrypted = encrypt_cesar(input_characters, 3)
+print(encrypted)
+decrypted = encrypt_cesar(encrypted, -3)
 
 write_file('resources/output1.txt', decrypted)
