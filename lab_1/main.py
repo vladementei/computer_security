@@ -41,7 +41,7 @@ def find_gcd(array):
 
 
 def read_file(path):
-    file = open(path, 'r+')
+    file = open(path, 'r+', encoding='utf-8')
     characters = [elem for elem in file.read()]
     file.close()
     return characters
@@ -104,7 +104,7 @@ def casisci(text):
     text_length = len(text)
     text = text.lower()
     gsd_array = []
-    for l in range(2, 10):
+    for l in range(2, 20):
         for i in range(text_length - l + 1):
             search = text[i: i + l]
             positions = [token.start() for token in re.finditer(search, text)]
@@ -157,7 +157,7 @@ def hack_vigenere(text):
 input_characters = read_file('resources/input1.txt')
 
 # vigenere
-encrypted = vigenere(input_characters, 'mouse')
+encrypted = vigenere(input_characters, 'mkjio')
 # print(encrypted)
 # print('key length = ', casisci("".join(encrypted)))
 # decrypted = vigenere(encrypted, 'moUsE', False)
