@@ -1,7 +1,38 @@
+# pip install numpy
 import math
 import re
+import numpy as np
 from functools import reduce
 from collections import Counter
+
+eng_frequencies = [
+    {"letter": "a", "frequency": 0.08167},
+    {"letter": "b", "frequency": 0.01492},
+    {"letter": "c", "frequency": 0.02782},
+    {"letter": "d", "frequency": 0.04253},
+    {"letter": "e", "frequency": 0.12702},
+    {"letter": "f", "frequency": 0.0228},
+    {"letter": "g", "frequency": 0.02015},
+    {"letter": "h", "frequency": 0.06094},
+    {"letter": "i", "frequency": 0.06966},
+    {"letter": "j", "frequency": 0.00153},
+    {"letter": "k", "frequency": 0.00772},
+    {"letter": "l", "frequency": 0.04025},
+    {"letter": "m", "frequency": 0.02406},
+    {"letter": "n", "frequency": 0.06749},
+    {"letter": "o", "frequency": 0.07507},
+    {"letter": "p", "frequency": 0.01929},
+    {"letter": "q", "frequency": 0.00095},
+    {"letter": "r", "frequency": 0.05987},
+    {"letter": "s", "frequency": 0.06327},
+    {"letter": "t", "frequency": 0.09056},
+    {"letter": "u", "frequency": 0.02758},
+    {"letter": "v", "frequency": 0.00978},
+    {"letter": "w", "frequency": 0.0236},
+    {"letter": "x", "frequency": 0.0015},
+    {"letter": "y", "frequency": 0.01974},
+    {"letter": "z", "frequency": 0.00074}
+]
 
 
 def find_gcd(array):
@@ -84,13 +115,43 @@ def casisci(text):
                 gcd = find_gcd(distances)
                 if gcd > 1:
                     gsd_array.append(gcd)
-                    # print(l, ' ', search, ' ', positions, ' ', distances, ' ', gcd)
-    # print(sorted(gsd_array, key=gsd_array.count, reverse=True))
-    # print(Counter(gsd_array))
     counter = Counter(gsd_array)
     answer = next(iter(counter))
-    print('probability = ', counter[answer] / len(gsd_array))
+    print('key len = ', answer, ' probability = ', counter[answer] / len(gsd_array))
     return answer
+
+
+def get_text_frequencies(text):
+    alphabet = list(map(lambda x: x['letter'], eng_frequencies))
+    letters_repeat = dict.fromkeys(alphabet, 0.0)
+    for letter in text:
+        if letters_repeat.get(letter.lower()) is not None:
+            letters_repeat[letter.lower()] += 1
+    letters_num = sum(letters_repeat.values())
+    for letter in letters_repeat:
+        letters_repeat[letter] = letters_repeat[letter] / letters_num
+    return letters_repeat
+
+
+def find_key_shift(text):
+    alphabet_frequencies = eng_frequencies
+    text_frequencies = get_text_frequencies(text)
+    shifts = {}
+    for i in range(len(alphabet_frequencies)):
+        absolute_val_array = np.abs(np.array(list(text_frequencies.values())) - alphabet_frequencies[i]['frequency'])
+        smallest_difference_index = absolute_val_array.argmin()
+        shifts[smallest_difference_index - i] = shifts.get(smallest_difference_index - i, 0) + 1
+    max_num_shifts = max(shifts, key=lambda x: shifts[x])
+    return max_num_shifts if max_num_shifts >= 0 else len(eng_frequencies) + max_num_shifts
+
+
+def hack_vigenere(text):
+    key_len = casisci("".join(text))
+    key = []
+    for i in range(key_len):
+        shift = find_key_shift(text[i::key_len])
+        key.append(chr(ord('a') + shift))
+    return "".join(key)
 
 
 input_characters = read_file('resources/input1.txt')
@@ -98,13 +159,17 @@ input_characters = read_file('resources/input1.txt')
 # vigenere
 encrypted = vigenere(input_characters, 'mouse')
 # print(encrypted)
-print('key length = ', casisci("".join(encrypted)))
+# print('key length = ', casisci("".join(encrypted)))
 # decrypted = vigenere(encrypted, 'moUsE', False)
 # print(decrypted)
 
 # cesar
-encrypted = cesar(input_characters, 3)
+# encrypted = cesar(input_characters, 3)
 # print(encrypted)
 # decrypted = cesar(encrypted, 3, False)
 # print(decrypted)
 # write_file('resources/output1.txt', decrypted)
+
+
+print('key = ', hack_vigenere(encrypted))
+
