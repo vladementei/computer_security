@@ -1,9 +1,11 @@
 # pip install numpy
+# pip install matplotlib
 import math
 import re
 import numpy as np
 from functools import reduce
 from collections import Counter
+import matplotlib.pyplot as plt
 
 eng_frequencies = [
     {"letter": "a", "frequency": 0.08167},
@@ -48,7 +50,7 @@ def read_file(path):
 
 
 def write_file(path, content):
-    file = open(path, "w")
+    file = open(path, "w", encoding='utf-8')
     for elem in content:
         file.write(elem)
     file.close()
@@ -117,7 +119,7 @@ def casisci(text):
                     gsd_array.append(gcd)
     counter = Counter(gsd_array)
     answer = next(iter(counter))
-    print('key len = ', answer, ' probability = ', counter[answer] / len(gsd_array))
+    # print('key len = ', answer, ' probability = ', counter[answer] / len(gsd_array))
     return answer
 
 
@@ -154,10 +156,44 @@ def hack_vigenere(text):
     return "".join(key)
 
 
-input_characters = read_file('resources/input1.txt')
+def keys_equality(key1, key2):
+    arr1 = [char for char in key1]
+    arr2 = [char for char in key2]
+    counter = 0
+    for i in range(min(len(arr1), len(arr2))):
+        if arr1[i] == arr2[i]:
+            counter += 1
+    return counter / max(len(arr1), len(arr2))
+
+
+x = []
+y = []
+key = 'hjsiz'
+
+for i in range(1, 11):
+    input_characters = read_file('resources/input' + str(i) + '.txt')
+    encrypted = vigenere(input_characters, key)
+    write_file('resources/output' + str(i) + '.txt', encrypted)
+    hacked_key = hack_vigenere(encrypted)
+    x.append(len(input_characters))
+    y.append(keys_equality(key, hacked_key))
+    print(i)
+    print('file len', len(input_characters))
+    print('hacked key = ', hacked_key)
+    print('equality = ', keys_equality(key, hacked_key))
+
+
+plt.plot(x, y)
+plt.xlabel('file len')
+plt.ylabel('probability')
+plt.title('File Len - Probability diagram')
+plt.show()
+
+
 
 # vigenere
-encrypted = vigenere(input_characters, 'mkjio')
+# input_characters = read_file('resources/input' + str(i) + '.txt')
+# encrypted = vigenere(input_characters, 'hjsiz')
 # print(encrypted)
 # print('key length = ', casisci("".join(encrypted)))
 # decrypted = vigenere(encrypted, 'moUsE', False)
@@ -169,7 +205,3 @@ encrypted = vigenere(input_characters, 'mkjio')
 # decrypted = cesar(encrypted, 3, False)
 # print(decrypted)
 # write_file('resources/output1.txt', decrypted)
-
-
-print('key = ', hack_vigenere(encrypted))
-
