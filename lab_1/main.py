@@ -178,7 +178,7 @@ for i in range(1, 11):
     x.append(len(input_characters))
     y.append(keys_equality(key, hacked_key))
     print(i)
-    print('file len', len(input_characters))
+    print('file len = ', len(input_characters))
     print('hacked key = ', hacked_key)
     print('equality = ', keys_equality(key, hacked_key))
 
@@ -187,6 +187,30 @@ plt.plot(x, y)
 plt.xlabel('file len')
 plt.ylabel('probability')
 plt.title('File Len - Probability diagram')
+plt.show()
+
+##################################
+
+x = []
+y = []
+demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp', 'pkdajpiltwm']
+
+for i in range(0, 10):
+    input_characters = read_file('resources/input6.txt')
+    encrypted = vigenere(input_characters, demo_keys[i])
+    hacked_key = hack_vigenere(encrypted)
+    x.append(len(demo_keys[i]))
+    y.append(keys_equality(demo_keys[i], hacked_key))
+    print(i + 1)
+    print('key len = ', len(demo_keys[i]))
+    print('hacked key = ', hacked_key)
+    print('equality = ', keys_equality(demo_keys[i], hacked_key))
+
+
+plt.plot(x, y)
+plt.xlabel('key len')
+plt.ylabel('probability')
+plt.title('Key Len - Probability diagram')
 plt.show()
 
 
