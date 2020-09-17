@@ -4,7 +4,7 @@ import math
 import re
 import numpy as np
 from functools import reduce
-from collections import Counter
+import random
 import matplotlib.pyplot as plt
 
 eng_frequencies = [
@@ -102,24 +102,45 @@ def vigenere(array, key, enc=True):
     return answer
 
 
+def gram_gcd(positions):
+    distances = []
+    for j in range(1, len(positions)):
+        distances.append(positions[j] - positions[j - 1])
+    gcd = find_gcd(distances)
+    return gcd
+
+
+def add_gsd(gcd_array, gcd):
+    if gcd > 1:
+        gcd_array.append(gcd)
+
+
 def casisci(text):
     text_length = len(text)
     text = text.lower()
-    gsd_array = []
-    for l in range(2, 20):
-        for i in range(text_length - l + 1):
-            search = text[i: i + l]
+    gcd_array = []
+    grams = {}
+    for i in range(text_length - 1):
+        search = text[i: i + 2]
+        if grams.get(search) is None:
             positions = [token.start() for token in re.finditer(search, text)]
-            if len(positions) > 1:
-                distances = []
-                for j in range(1, len(positions)):
-                    distances.append(positions[j] - positions[j - 1])
-                gcd = find_gcd(distances)
-                if gcd > 1:
-                    gsd_array.append(gcd)
-    counter = Counter(gsd_array)
-    answer = next(iter(counter))
-    # print('key len = ', answer, ' probability = ', counter[answer] / len(gsd_array))
+            if len(positions) > 2:  # or 1
+                grams[search] = positions
+                add_gsd(gcd_array, gram_gcd(positions))
+
+    i = 0
+    while i < len(grams.keys()):
+        gram = list(grams.keys())[i]
+        for pos in grams[gram]:
+            search = text[pos: pos + len(gram) + 1]
+            if grams.get(search) is None:
+                positions = [token.start() for token in re.finditer(search, text)]
+                if len(positions) > 2:  # or 1
+                    grams[search] = positions
+                    add_gsd(gcd_array, gram_gcd(positions))
+        i += 1
+    answer = max(set(gcd_array), key=gcd_array.count)
+    print(answer)
     return answer
 
 
@@ -130,6 +151,7 @@ def get_text_frequencies(text):
         if letters_repeat.get(letter.lower()) is not None:
             letters_repeat[letter.lower()] += 1
     letters_num = sum(letters_repeat.values())
+    letters_num = letters_num if letters_num > 0 else 1
     for letter in letters_repeat:
         letters_repeat[letter] = letters_repeat[letter] / letters_num
     return letters_repeat
@@ -166,53 +188,68 @@ def keys_equality(key1, key2):
     return counter / max(len(arr1), len(arr2))
 
 
-x = []
-y = []
-key = 'hjsiz'
+demo_keys = ['apokmpu', 'wflrh', 'revlm', 'pretm', 'rezsf', 'erfbm', 'qwlbx', 'mprce', 'apncx', 'xitrk']
 
-for i in range(1, 11):
-    input_characters = read_file('resources/input' + str(i) + '.txt')
-    encrypted = vigenere(input_characters, key)
-    write_file('resources/output' + str(i) + '.txt', encrypted)
-    hacked_key = hack_vigenere(encrypted)
-    x.append(len(input_characters))
-    y.append(keys_equality(key, hacked_key))
-    print(i)
-    print('file len = ', len(input_characters))
-    print('hacked key = ', hacked_key)
-    print('equality = ', keys_equality(key, hacked_key))
-
-
-plt.plot(x, y)
-plt.xlabel('file len')
-plt.ylabel('probability')
-plt.title('File Len - Probability diagram')
-plt.show()
-
-##################################
-
-x = []
-y = []
-demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp', 'pkdajpiltwm']
-
-for i in range(0, 10):
-    input_characters = read_file('resources/input6.txt')
-    encrypted = vigenere(input_characters, demo_keys[i])
-    hacked_key = hack_vigenere(encrypted)
-    x.append(len(demo_keys[i]))
-    y.append(keys_equality(demo_keys[i], hacked_key))
-    print(i + 1)
-    print('key len = ', len(demo_keys[i]))
-    print('hacked key = ', hacked_key)
-    print('equality = ', keys_equality(demo_keys[i], hacked_key))
+input_characters = read_file('resources/big.txt')
+test_text = input_characters[40: 400 + 2000]
+encrypted = vigenere(test_text, demo_keys[0])
+hacked_key = hack_vigenere(encrypted)
+print('hacked key = ', hacked_key)
+# for key in demo_keys:
+#     rand_num = random.randint(0, len(input_characters) - 2000)
+#     text = input_characters[rand_num: rand_num + 4000]
+#     encrypted = vigenere(text, key)
+#     hacked_key = hack_vigenere(encrypted)
+#     print('hacked key = ', hacked_key)
+#     print('equality = ', keys_equality(key, hacked_key))
 
 
-plt.plot(x, y)
-plt.xlabel('key len')
-plt.ylabel('probability')
-plt.title('Key Len - Probability diagram')
-plt.show()
-
+# x = []
+# y = []
+# key = 'hjsiz'
+#
+# for i in range(1, 11):
+#     input_characters = read_file('resources/input' + str(i) + '.txt')
+#     encrypted = vigenere(input_characters, key)
+#     write_file('resources/output' + str(i) + '.txt', encrypted)
+#     hacked_key = hack_vigenere(encrypted)
+#     x.append(len(input_characters))
+#     y.append(keys_equality(key, hacked_key))
+#     print(i)
+#     print('file len = ', len(input_characters))
+#     print('hacked key = ', hacked_key)
+#     print('equality = ', keys_equality(key, hacked_key))
+#
+#
+# plt.plot(x, y)
+# plt.xlabel('file len')
+# plt.ylabel('probability')
+# plt.title('File Len - Probability diagram')
+# plt.show()
+#
+# ##################################
+#
+# x = []
+# y = []
+# demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp', 'pkdajpiltwm']
+#
+# for i in range(0, 10):
+#     input_characters = read_file('resources/input6.txt')
+#     encrypted = vigenere(input_characters, demo_keys[i])
+#     hacked_key = hack_vigenere(encrypted)
+#     x.append(len(demo_keys[i]))
+#     y.append(keys_equality(demo_keys[i], hacked_key))
+#     print(i + 1)
+#     print('key len = ', len(demo_keys[i]))
+#     print('hacked key = ', hacked_key)
+#     print('equality = ', keys_equality(demo_keys[i], hacked_key))
+#
+#
+# plt.plot(x, y)
+# plt.xlabel('key len')
+# plt.ylabel('probability')
+# plt.title('Key Len - Probability diagram')
+# plt.show()
 
 
 # vigenere
