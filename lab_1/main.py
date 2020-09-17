@@ -190,8 +190,8 @@ def keys_equality(key1, key2):
 
 demo_keys = ['apokmpu', 'wflrh', 'revlm', 'pretm', 'rezsf', 'erfbm', 'qwlbx', 'mprce', 'apncx', 'xitrk']
 
-input_characters = read_file('resources/big.txt')
-test_text = input_characters[40: 400 + 2000]
+input_characters = read_file('resources/big10.txt')
+test_text = input_characters
 encrypted = vigenere(test_text, demo_keys[0])
 hacked_key = hack_vigenere(encrypted)
 print('hacked key = ', hacked_key)
