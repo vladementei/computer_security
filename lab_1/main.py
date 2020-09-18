@@ -6,6 +6,7 @@ import re
 from functools import reduce
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import Counter
 
 eng_frequencies = [
     {"letter": "a", "frequency": 0.08167},
@@ -121,6 +122,12 @@ def gram_gcd(positions):
     distances = []
     for j in range(1, len(positions)):
         distances.append(positions[j] - positions[j - 1])
+    # filtering random grams
+    frequency = Counter(distances)
+    leave_num = math.ceil(1.0 * len(frequency))  # change threshold
+    frequency = frequency.most_common(leave_num)
+    distances = [f[0] for f in frequency]
+    # end
     gcd = find_gcd(distances)
     return gcd
 
@@ -205,6 +212,7 @@ def keys_equality(key1, key2):
 def perform_tests(num_tests):
     demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp',
                  'pkdajpiltwm']
+    casisci_statistics = [[0 for i in range(num_tests)] for i in range(num_tests)]
     dz = [0 for i in range(num_tests * num_tests)]
     for text_iter in range(num_tests):
         input_characters = read_file('resources/big' + str(text_iter + 1) + '.txt')
@@ -219,10 +227,14 @@ def perform_tests(num_tests):
                 print('hacked key = ', hacked_key)
                 print('equality = ', keys_equality(cur_key, hacked_key))
                 dz[text_len * num_tests + len(cur_key) - len(demo_keys[0])] += ((hacked_key == cur_key) / num_tests)
+                casisci_statistics[len(cur_key) - len(demo_keys[0])][text_len] += len(hacked_key) == len(cur_key)
+    print('casisci tests statistics')
+    for row in casisci_statistics:
+        print(row)
     return dz
 
 
-num_tests = 5
+num_tests = 10
 dz = perform_tests(num_tests)
 write_probabilities('resources/probabilities.txt', dz)
 # dz = read_probabilities('resources/probabilities.txt')
@@ -244,6 +256,7 @@ ax.set_xlabel('text len')
 ax.set_ylabel('key len')
 ax.set_zlabel('probability')
 ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='#00ceaa')
+plt.margins(0)
 plt.show()
 
 
