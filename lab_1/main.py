@@ -56,6 +56,21 @@ def write_file(path, content):
     file.close()
 
 
+def write_probabilities(path, content):
+    file = open(path, "w", encoding='utf-8')
+    for elem in content:
+        file.write(str(elem))
+        file.write('\n')
+    file.close()
+
+
+def read_probabilities(path):
+    file = open(path, 'r+', encoding='utf-8')
+    characters = [float(elem) for elem in file.readlines()]
+    file.close()
+    return characters
+
+
 def is_letter(char):
     return 'a' <= char <= 'z' or 'A' <= char <= 'Z'
 
@@ -187,28 +202,42 @@ def keys_equality(key1, key2):
     return counter / max(len(arr1), len(arr2))
 
 
-demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp', 'pkdajpiltwm']
-demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz']
-xpos = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4]
-ypos = [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
-zpos = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-dx = np.ones(16)
-dy = np.ones(16)
-dz = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+def perform_tests(num_tests):
+    demo_keys = ['zx', 'ryh', 'gqpl', 'hjsiz', 'zqwerm', 'mpqzjga', 'qrtogdan', 'zxcvbnmlk', 'omqfvijktp',
+                 'pkdajpiltwm']
+    dz = [0 for i in range(num_tests * num_tests)]
+    for text_iter in range(num_tests):
+        input_characters = read_file('resources/big' + str(text_iter + 1) + '.txt')
+        for cur_inter in range(num_tests):
+            cur_key = demo_keys[cur_inter]
+            for text_len in range(num_tests):
+                rand_num = random.randint(0, len(input_characters) - (text_len + 1) * 1000)
+                test_text = input_characters[rand_num: rand_num + (text_len + 1) * 1000]
+                encrypted = vigenere(test_text, cur_key)
+                hacked_key = hack_vigenere(encrypted)
+                print('text ', text_iter + 1, ', len key ', len(cur_key), ', len text ', len(test_text))
+                print('hacked key = ', hacked_key)
+                print('equality = ', keys_equality(cur_key, hacked_key))
+                dz[text_len * num_tests + len(cur_key) - len(demo_keys[0])] += ((hacked_key == cur_key) / num_tests)
+    return dz
 
-for text_iter in range(4):
-    input_characters = read_file('resources/big' + str(text_iter + 1) + '.txt')
-    for cur_key in demo_keys:
-        for text_len in range(4):
-            rand_num = random.randint(0, len(input_characters) - (text_len + 1) * 1000)
-            test_text = input_characters[rand_num: rand_num + (text_len + 1) * 1000]
-            encrypted = vigenere(test_text, cur_key)
-            hacked_key = hack_vigenere(encrypted)
-            print('text ', text_iter + 1, ', len key ', len(cur_key), ', len text ', len(test_text))
-            print('hacked key = ', hacked_key)
-            print('equality = ', keys_equality(cur_key, hacked_key))
-            dz[text_len * 4 + len(cur_key) - 2] += hacked_key == cur_key
 
+num_tests = 5
+dz = perform_tests(num_tests)
+write_probabilities('resources/probabilities.txt', dz)
+# dz = read_probabilities('resources/probabilities.txt')
+
+xpos = []
+ypos = []
+zpos = []
+dx = []
+dy = np.ones(num_tests * num_tests)
+for i in range(num_tests):
+    for j in range(num_tests):
+        xpos.append((i + 1) * 1000)
+        ypos.append(j + 2)
+        zpos.append(0)
+        dx.append(1000)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlabel('text len')
@@ -216,37 +245,6 @@ ax.set_ylabel('key len')
 ax.set_zlabel('probability')
 ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='#00ceaa')
 plt.show()
-
-# import matplotlib.pyplot as plt
-# import numpy as np
-#
-# x = np.array([[1, 2, 3], [2, 4, 3]])
-# y = np.array([[3, 4, 2], [3, 2, 4]])
-# Z = np.array([[1, 2, 3], [1, 2, 4]])
-#
-#
-# fig = plt.figure(figsize=(6,6))
-# ax = fig.add_subplot(111, projection='3d')
-#
-#
-# # Plot a 3D surface
-# ax.plot_surface(x, y, Z)
-#
-#
-# plt.show()
-
-# input_characters = read_file('resources/big10.txt')
-# test_text = input_characters
-# encrypted = vigenere(test_text, demo_keys[0])
-# hacked_key = hack_vigenere(encrypted)
-# print('hacked key = ', hacked_key)
-# for key in demo_keys:
-#     rand_num = random.randint(0, len(input_characters) - 2000)
-#     text = input_characters[rand_num: rand_num + 4000]
-#     encrypted = vigenere(text, key)
-#     hacked_key = hack_vigenere(encrypted)
-#     print('hacked key = ', hacked_key)
-#     print('equality = ', keys_equality(key, hacked_key))
 
 
 # x = []
