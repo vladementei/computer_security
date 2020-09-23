@@ -124,7 +124,7 @@ def gram_gcd(positions):
         distances.append(positions[j] - positions[j - 1])
     # filtering random grams
     frequency = Counter(distances)
-    leave_num = math.ceil(1.0 * len(frequency))  # change threshold
+    leave_num = math.ceil(0.9 * len(frequency))  # change threshold
     frequency = frequency.most_common(leave_num)
     distances = [f[0] for f in frequency]
     # end
@@ -237,7 +237,7 @@ def perform_tests(num_tests):
 num_tests = 10
 dz = perform_tests(num_tests)
 write_probabilities('resources/probabilities.txt', dz)
-# dz = read_probabilities('resources/probabilities.txt')
+# dz = read_probabilities('resources/probabilities.txt') построение на основе ранее полученных данных без перевычислений
 
 xpos = []
 ypos = []
