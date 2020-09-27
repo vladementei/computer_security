@@ -1,10 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+
+//EXAMPLES
+//////////////////////////////////////////////////////////////////////////////////////
 app.get('/', (request, response) => {
     response.send('Hello API');
 })
@@ -34,6 +38,20 @@ app.put('/login/:id', (request, response) => {
 app.delete('/login/:id', (request, response) => {
     console.log('Login delete route with id ' + parseInt(request.params.id));
     response.sendStatus(200);
+})
+
+///////////////////////////////////////////////////////////////////////////
+app.get('/file/:fileName', (request, response) => {
+    console.log('Get file ' + request.params.fileName);
+    fs.readFile('assets/' + request.params.fileName, 'utf8', (err, contents) => {
+        if (!err) {
+            response.type('.' + request.params.fileName.split('.').pop());
+            response.send(contents);
+        } else {
+            response.sendStatus(404);
+        }
+    });
+    //response.sendFile(__dirname + '/assets/' + request.params.fileName);
 })
 
 app.listen(8080, () => {
