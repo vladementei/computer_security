@@ -60,6 +60,12 @@ app.get('/session-key', (request, response) => {
     response.send(generatedKey);
 });
 
+app.post('/set-open-rsa', (request, response) => {
+    console.log('e = ' + parseInt(request.body.e));
+    console.log('n = ' + parseInt(request.body.n));
+    response.sendStatus(200);
+});
+
 
 app.listen(8080, () => {
     console.log('Server is running on port 8080');
