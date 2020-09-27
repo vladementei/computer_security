@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const utils = require('./utils');
 
 const app = express();
 app.use(bodyParser.json());
@@ -52,7 +53,13 @@ app.get('/file/:fileName', (request, response) => {
         }
     });
     //response.sendFile(__dirname + '/assets/' + request.params.fileName);
-})
+});
+
+app.get('/session-key', (request, response) => {
+    const generatedKey = utils.generateSessionKey();
+    response.send(generatedKey);
+});
+
 
 app.listen(8080, () => {
     console.log('Server is running on port 8080');
