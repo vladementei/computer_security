@@ -42,12 +42,18 @@ app.delete('/login/:id', (request, response) => {
 })
 
 ///////////////////////////////////////////////////////////////////////////
+
+//API
+
+const sessionKey = utils.generateSessionKey();//TODO remove hardcode
+
+
 app.get('/file/:fileName', (request, response) => {
     console.log('Get file ' + request.params.fileName);
     fs.readFile('assets/' + request.params.fileName, 'utf8', (err, contents) => {
         if (!err) {
             response.type('.' + request.params.fileName.split('.').pop());
-            response.send(contents);
+            response.send(utils.decrypt(sessionKey, utils.encrypt(sessionKey, contents)));//TODO remove hardcode
         } else {
             response.sendStatus(404);
         }
@@ -56,7 +62,7 @@ app.get('/file/:fileName', (request, response) => {
 });
 
 app.get('/session-key', (request, response) => {
-    const generatedKey = utils.generateSessionKey();
+    const generatedKey = sessionKey;//TODO remove hardcode
     response.send(generatedKey);
 });
 

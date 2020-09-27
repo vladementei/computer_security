@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {RSAOpenPart} from './models.model';
 import {take} from 'rxjs/operators';
@@ -8,12 +8,17 @@ import {take} from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private readonly url: string = '/api/';
   fileNameInput = 'file.txt';
   text = '';
+  sessionKey = '';
 
   constructor(private httpClient: HttpClient) {
+  }
+
+  ngOnInit(): void {
+    this.generateSessionKey();
   }
 
   generateOpenPartRSA(): void {
@@ -29,7 +34,7 @@ export class AppComponent {
   generateSessionKey(): void {
     this.httpClient.get(this.url + 'session-key', {responseType: 'text'})
       .pipe(take(1))
-      .subscribe((sessionKey: any) => console.log(sessionKey));
+      .subscribe((sessionKey: any) => this.sessionKey = sessionKey);
   }
 
   getFile(): void {
