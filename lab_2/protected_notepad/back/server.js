@@ -63,7 +63,7 @@ app.get('/session-key', (request, response) => {
 app.post('/set-open-rsa', (request, response) => {
     console.log('e = ' + parseInt(request.body.e));
     console.log('n = ' + parseInt(request.body.n));
-    response.sendStatus(200);
+    response.status(200).send({status: 'OK'});
 });
 
 

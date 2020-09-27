@@ -2,4 +2,30 @@
         (click)="generateOpenPartRSA()">
   Generate open part of RSA
 </button>
+
+<button mat-flat-button color="primary"
+        (click)="generateSessionKey()">
+  Generate session key
+</button>
+
+<div>
+  <div class="form">
+    <mat-form-field class="form-input">
+      <mat-label>File name</mat-label>
+      <input matInput
+             placeholder="file.txt"
+             [(ngModel)]="this.fileNameInput">
+    </mat-form-field>
+    <button mat-flat-button color="primary"
+            (click)="getFile()">
+      Get file
+    </button>
+  </div>
+
+  <div *ngIf="this.text">
+    {{this.text}}
+  </div>
+</div>
+
+
 <router-outlet></router-outlet>
