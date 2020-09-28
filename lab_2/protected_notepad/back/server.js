@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const utils = require('./utils');
+const NodeRSA = require('node-rsa');
 
 const app = express();
 app.use(bodyParser.json());
@@ -46,6 +47,7 @@ app.delete('/login/:id', (request, response) => {
 //API
 
 const sessionKey = utils.generateSessionKey();//TODO remove hardcode
+let rsaPublicKey = '';//TODO
 
 
 app.get('/file/:fileName', (request, response) => {
@@ -62,13 +64,14 @@ app.get('/file/:fileName', (request, response) => {
 });
 
 app.get('/session-key', (request, response) => {
-    const generatedKey = sessionKey;//TODO remove hardcode
+    const key = new NodeRSA(rsaPublicKey);
+    const generatedKey = key.encrypt(sessionKey);//TODO remove hardcode
     response.send(generatedKey);
 });
 
 app.post('/set-open-rsa', (request, response) => {
-    console.log('e = ' + parseInt(request.body.e));
-    console.log('n = ' + parseInt(request.body.n));
+    rsaPublicKey = request.body.openPart;
+    console.log('open part = ' + rsaPublicKey);
     response.status(200).send({status: 'OK'});
 });
 
