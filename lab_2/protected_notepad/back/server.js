@@ -65,7 +65,7 @@ app.get('/file/:fileName', (request, response) => {
 
 app.get('/session-key', (request, response) => {
     const key = new NodeRSA(rsaPublicKey);
-    const generatedKey = key.encrypt(sessionKey);//TODO remove hardcode
+    const generatedKey = key.encrypt(sessionKey, 'base64');//TODO remove hardcode
     response.send(generatedKey);
 });
 

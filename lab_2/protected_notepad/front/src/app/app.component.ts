@@ -33,8 +33,8 @@ export class AppComponent implements OnInit {
     this.httpClient.get(this.url + 'session-key', {responseType: 'text'})
       .pipe(take(1))
       .subscribe((sessionKey: any) => {
-        const key = new NodeRSA(this.rsaPair.public);
-        const generatedKey = key.decrypt(sessionKey);
+        const key = new NodeRSA(this.rsaPair.private);
+        const generatedKey = key.decrypt(sessionKey, 'utf8');
         this.sessionKey = generatedKey;
       });
   }
