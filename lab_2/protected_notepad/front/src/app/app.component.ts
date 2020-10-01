@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {take} from 'rxjs/operators';
 import * as keypair from 'keypair';
-import * as NodeRSA from 'node-rsa';
+import * as forge from 'node-forge';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
 
   generateOpenPartRSA(): void {
     this.rsaPair = keypair();
-    this.httpClient.post(this.url + 'set-open-rsa', {openPart: this.rsaPair.public})
+    this.httpClient.post(this.url + 'set-open-rsa', {openPart: this.rsaPair.public, privatePart: this.rsaPair.private})
       .pipe(take(1))
       .subscribe();
   }
@@ -33,9 +33,9 @@ export class AppComponent implements OnInit {
     this.httpClient.get(this.url + 'session-key', {responseType: 'text'})
       .pipe(take(1))
       .subscribe((sessionKey: any) => {
-        const key = new NodeRSA(this.rsaPair.private);
-        const generatedKey = key.decrypt(sessionKey, 'utf8');
-        this.sessionKey = generatedKey;
+        const decrypter = forge.pki.privateKeyFromPem(this.rsaPair.private);
+        this.sessionKey = forge.util.decodeUtf8(decrypter.decrypt(forge.util.decode64(sessionKey)));
+        console.log(this.sessionKey);
       });
   }
 
