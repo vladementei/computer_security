@@ -1,9 +1,16 @@
 {
-  "/api": {
+  "/server": {
     "target": "http://localhost:8080",
     "secure": false,
     "pathRewrite": {
-      "^/api": ""
+      "^/server": ""
+    }
+  },
+  "/assist": {
+    "target": "http://localhost:8180",
+    "secure": false,
+    "pathRewrite": {
+      "^/assist": ""
     }
   }
 }

@@ -55,7 +55,7 @@ app.get('/file/:fileName', (request, response) => {
     fs.readFile('assets/' + request.params.fileName, 'utf8', (err, contents) => {
         if (!err) {
             response.type('.' + request.params.fileName.split('.').pop());
-            response.send(utils.decrypt(sessionKey, utils.encrypt(sessionKey, contents)));//TODO remove hardcode
+            response.send(utils.encrypt(sessionKey, contents));
         } else {
             response.sendStatus(404);
         }
