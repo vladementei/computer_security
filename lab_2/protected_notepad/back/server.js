@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const utils = require('./utils');
-const NodeRSA = require('node-rsa');
+const forge = require('node-forge');
 
 const app = express();
 app.use(bodyParser.json());
@@ -64,9 +64,9 @@ app.get('/file/:fileName', (request, response) => {
 });
 
 app.get('/session-key', (request, response) => {
-    const key = new NodeRSA(rsaPublicKey);
-    const generatedKey = key.encrypt(sessionKey, 'base64');//TODO remove hardcode
-    response.send(generatedKey);
+    const encrypter = forge.pki.publicKeyFromPem(rsaPublicKey);
+    const encryptedSessionKey = forge.util.encode64(encrypter.encrypt(forge.util.encodeUtf8(sessionKey)));
+    response.send(encryptedSessionKey);
 });
 
 app.post('/set-open-rsa', (request, response) => {
