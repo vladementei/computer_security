@@ -10,7 +10,7 @@ import * as forge from 'node-forge';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  private readonly url: string = '/server/';
+  private readonly url: string = '/api/';
   fileNameInput = 'file.txt';
   text = '';
   sessionKey = '';
@@ -43,12 +43,8 @@ export class AppComponent implements OnInit {
     this.httpClient.get(this.url + 'file/' + this.fileNameInput, {responseType: 'text'})
       .pipe(take(1))
       .subscribe(
-        file => {
-          this.httpClient.post('/assist/' + 'decrypt-text', {key: this.sessionKey, text: file}, {responseType: 'text'})
-            .pipe(take(1))
-            .subscribe(encrypted => this.text = encrypted);
-          },
-            err => this.text = ''
+        file => this.text = file,
+        err => this.text = ''
       );
   }
 }
