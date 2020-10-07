@@ -2,6 +2,9 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path');
 const crypto = require('crypto');
+const debug = require('electron-debug');
+
+debug();
 
 function createWindow () {
   // Create the browser window.
@@ -25,6 +28,7 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
+  const cipher = crypto.createCipher('idea-ofb', 'abcd');
   console.log(crypto.getCiphers().slice(40));
   
   app.on('activate', function () {
