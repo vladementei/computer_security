@@ -36,11 +36,34 @@ electron.ipcRenderer.on('getSessionKey', () => {
 })
 
 electron.ipcRenderer.on('openFile', (event, message) => {
+    window.localStorage.setItem('file', message);
     axios
         .get(url + 'file/' + message)
         .then(encryptedFile => {
             document.getElementById('text').value = utils.decrypt(window.localStorage.getItem('sessionKey'), encryptedFile.data);
         })
+        .catch((error) => console.error(error))
+});
+
+electron.ipcRenderer.on('saveFile', (event, message) => {
+    window.localStorage.setItem('file', message);
+    axios
+        .post(url + 'file/' + message, {text: document.getElementById('text').value})
+        .then()
+        .catch((error) => console.error(error))
+});
+
+electron.ipcRenderer.on('updateFile', () => {
+    axios
+        .put(url + 'file/' + window.localStorage.getItem('file'), {text: document.getElementById('text').value})
+        .then()
+        .catch((error) => console.error(error))
+});
+
+electron.ipcRenderer.on('deleteFile', (event, message) => {
+    axios
+        .delete(url + 'file/' + message)
+        .then()
         .catch((error) => console.error(error))
 });
 

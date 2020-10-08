@@ -63,6 +63,23 @@ app.get('/file/:fileName', (request, response) => {
     //response.sendFile(__dirname + '/assets/' + request.params.fileName);
 });
 
+app.post('/file/:fileName', (request, response) => {
+    console.log('Create file ' + request.params.fileName);
+    console.log('Content ' + request.body.text);
+    response.status(200).send({status: 'OK'});
+});
+
+app.put('/file/:fileName', (request, response) => {
+    console.log('Update file ' + request.params.fileName);
+    console.log('Content ' + request.body.text);
+    response.status(200).send({status: 'OK'});
+});
+
+app.delete('/file/:fileName', (request, response) => {
+    console.log('delete file ' + request.params.fileName);
+    response.status(200).send({status: 'OK'});
+});
+
 app.get('/session-key', (request, response) => {
     const encrypter = forge.pki.publicKeyFromPem(rsaPublicKey);
     const encryptedSessionKey = forge.util.encode64(encrypter.encrypt(forge.util.encodeUtf8(sessionKey)));
