@@ -65,19 +65,25 @@ app.get('/file/:fileName', (request, response) => {
 
 app.post('/file/:fileName', (request, response) => {
     console.log('Create file ' + request.params.fileName);
-    console.log('Content ' + utils.decrypt(sessionKey, request.body.text));
-    response.status(200).send({status: 'OK'});
+    fs.writeFile('assets/' + request.params.fileName,
+        utils.decrypt(sessionKey, request.body.text),
+        () => {
+        });
 });
 
 app.put('/file/:fileName', (request, response) => {
     console.log('Update file ' + request.params.fileName);
-    console.log('Content ' + utils.decrypt(sessionKey, request.body.text));
-    response.status(200).send({status: 'OK'});
+    fs.writeFile('assets/' + request.params.fileName,
+        utils.decrypt(sessionKey, request.body.text),
+        () => {
+        });
 });
 
 app.delete('/file/:fileName', (request, response) => {
     console.log('delete file ' + request.params.fileName);
-    response.status(200).send({status: 'OK'});
+    fs.unlink('assets/' + request.params.fileName,
+        () => {
+        });
 });
 
 app.get('/session-key', (request, response) => {

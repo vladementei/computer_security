@@ -69,5 +69,5 @@ electron.ipcRenderer.on('deleteFile', (event, message) => {
         .catch((error) => console.error(error))
 });
 
-//generate RSA on startup
+//generate RSA on startup and get session key
 electron.ipcRenderer.emit('generateRSA');

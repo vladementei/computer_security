@@ -1,8 +1,9 @@
 const crypto = require('crypto')
+const rand = require('random-key'); /*https://www.npmjs.com/package/random-key*/
 
 module.exports = {
     generateSessionKey: () => {
-        return 'abcd';
+        return rand.generate();
     },
     encrypt: (key, text) => {
         const cipher = crypto.createCipher('idea-ofb', key);
