@@ -37,6 +37,11 @@ document.querySelector('#getSessionKeyBtn').addEventListener('click', () => {
         .catch((error) => console.error(error))
 })
 
-electron.ipcRenderer.on('openFile', function(event, message) {
-    document.getElementById('text').value = 'abcd';
+electron.ipcRenderer.on('openFile', (event, message) => {
+    axios
+        .get(url + 'file/' + message)
+        .then(encryptedFile => {
+            document.getElementById('text').value = encryptedFile.data;
+        })
+        .catch((error) => console.error(error))
 });
