@@ -65,13 +65,13 @@ app.get('/file/:fileName', (request, response) => {
 
 app.post('/file/:fileName', (request, response) => {
     console.log('Create file ' + request.params.fileName);
-    console.log('Content ' + request.body.text);
+    console.log('Content ' + utils.decrypt(sessionKey, request.body.text));
     response.status(200).send({status: 'OK'});
 });
 
 app.put('/file/:fileName', (request, response) => {
     console.log('Update file ' + request.params.fileName);
-    console.log('Content ' + request.body.text);
+    console.log('Content ' + utils.decrypt(sessionKey, request.body.text));
     response.status(200).send({status: 'OK'});
 });
 

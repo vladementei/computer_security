@@ -48,14 +48,16 @@ electron.ipcRenderer.on('openFile', (event, message) => {
 electron.ipcRenderer.on('saveFile', (event, message) => {
     window.localStorage.setItem('file', message);
     axios
-        .post(url + 'file/' + message, {text: document.getElementById('text').value})
+        .post(url + 'file/' + message,
+            {text: utils.encrypt(window.localStorage.getItem('sessionKey'), document.getElementById('text').value)})
         .then()
         .catch((error) => console.error(error))
 });
 
 electron.ipcRenderer.on('updateFile', () => {
     axios
-        .put(url + 'file/' + window.localStorage.getItem('file'), {text: document.getElementById('text').value})
+        .put(url + 'file/' + window.localStorage.getItem('file'),
+            {text: utils.encrypt(window.localStorage.getItem('sessionKey'), document.getElementById('text').value)})
         .then()
         .catch((error) => console.error(error))
 });
