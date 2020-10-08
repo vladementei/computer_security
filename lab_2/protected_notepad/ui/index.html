@@ -6,11 +6,11 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:8080/; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>Protected Notepad</title>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-
-    <textarea id="text"/></textarea>
-
+    <label for="text"></label>
+    <textarea id="text"></textarea>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
   </body>
