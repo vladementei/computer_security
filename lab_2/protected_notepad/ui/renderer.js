@@ -29,10 +29,8 @@ document.querySelector('#getSessionKeyBtn').addEventListener('click', () => {
     axios
         .get(url + 'session-key')
         .then((res) => {
-            const encryptedKey = res.data;
             const decrypter = forge.pki.privateKeyFromPem(rsaPair.private);
-            sessionKey = forge.util.decodeUtf8(decrypter.decrypt(forge.util.decode64(encryptedKey)));
-            console.log(sessionKey);
+            sessionKey = forge.util.decodeUtf8(decrypter.decrypt(forge.util.decode64(res.data)));
         })
         .catch((error) => console.error(error))
 })
@@ -41,7 +39,7 @@ electron.ipcRenderer.on('openFile', (event, message) => {
     axios
         .get(url + 'file/' + message)
         .then(encryptedFile => {
-            document.getElementById('text').value = utils.decrypt('abcd', encryptedFile.data);
+            document.getElementById('text').value = utils.decrypt(sessionKey, encryptedFile.data);
         })
         .catch((error) => console.error(error))
 });
