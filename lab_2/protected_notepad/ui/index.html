@@ -5,14 +5,9 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:8080/; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
+    <title>Protected Notepad</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-
     <button id="rsaGenerationBtn">
       Generate open part of RSA
     </button>
@@ -20,6 +15,8 @@
     <button id="getSessionKeyBtn">
       Generate session key
     </button>
+
+    <textarea id="text"/></textarea>
 
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>

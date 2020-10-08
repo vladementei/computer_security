@@ -1,23 +1,68 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
 const path = require('path');
 const crypto = require('crypto');
 const debug = require('electron-debug');
-
+const prompt = require('electron-prompt');
 debug();
+
+
+const template = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open',
+        id: 'as',
+        click: async () => {
+          prompt({
+            title: 'Open File',
+            label: 'File name',
+            value: 'file.txt',
+            type: 'input',
+            height: 180
+          })
+              .then((result) => {
+                if (result === null) {
+                  console.log('user cancelled');
+                } else {
+                  BrowserWindow.getAllWindows()[0].webContents.send('openFile', result);
+                }
+              })
+              .catch(console.error);
+        }
+      },
+      {
+        label: 'Save',
+        click: async () => {
+          console.log('save');
+        }
+      },
+      {
+        label: 'Delete',
+        click: async () => {
+          console.log('delete');
+        }
+      }
+    ]
+  }
+];
 
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
-  })
+  });
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('index.html');
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

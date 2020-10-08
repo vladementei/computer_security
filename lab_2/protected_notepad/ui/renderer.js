@@ -36,3 +36,7 @@ document.querySelector('#getSessionKeyBtn').addEventListener('click', () => {
         })
         .catch((error) => console.error(error))
 })
+
+electron.ipcRenderer.on('openFile', function(event, message) {
+    document.getElementById('text').value = 'abcd';
+});
