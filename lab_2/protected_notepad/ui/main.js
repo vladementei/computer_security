@@ -2,7 +2,9 @@ const {app, BrowserWindow, Menu} = require('electron')
 const path = require('path');
 const debug = require('electron-debug');
 const prompt = require('electron-prompt');
-debug();
+
+//Uncomment if you need debug mode
+//debug();
 
 
 const template = [
