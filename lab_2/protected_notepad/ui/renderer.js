@@ -11,26 +11,26 @@ const forge = require('node-forge');
 const utils = require('./utils');
 
 
-const rsaPair = keypair();
 const url = 'http://localhost:8080/';
-let sessionKey = '';
 
 
-document.querySelector('#rsaGenerationBtn').addEventListener('click', () => {
+electron.ipcRenderer.on('generateRSA', () => {
+    const rsaPair = keypair();
+    window.localStorage.setItem('rsa', rsaPair.private);
     axios
         .post(url + 'set-open-rsa', {
             openPart: rsaPair.public,
         })
-        .then()
+        .then(() => electron.ipcRenderer.emit('getSessionKey'))
         .catch((error) => console.error(error))
 });
 
-document.querySelector('#getSessionKeyBtn').addEventListener('click', () => {
+electron.ipcRenderer.on('getSessionKey', () => {
     axios
         .get(url + 'session-key')
         .then((res) => {
-            const decrypter = forge.pki.privateKeyFromPem(rsaPair.private);
-            sessionKey = forge.util.decodeUtf8(decrypter.decrypt(forge.util.decode64(res.data)));
+            const decrypter = forge.pki.privateKeyFromPem(window.localStorage.getItem('rsa'));
+            window.localStorage.setItem('sessionKey', forge.util.decodeUtf8(decrypter.decrypt(forge.util.decode64(res.data))));
         })
         .catch((error) => console.error(error))
 })
@@ -39,7 +39,10 @@ electron.ipcRenderer.on('openFile', (event, message) => {
     axios
         .get(url + 'file/' + message)
         .then(encryptedFile => {
-            document.getElementById('text').value = utils.decrypt(sessionKey, encryptedFile.data);
+            document.getElementById('text').value = utils.decrypt(window.localStorage.getItem('sessionKey'), encryptedFile.data);
         })
         .catch((error) => console.error(error))
 });
+
+//generate RSA on startup
+electron.ipcRenderer.emit('generateRSA');

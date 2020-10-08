@@ -40,6 +40,24 @@ const template = [
         }
       }
     ]
+  },
+  {
+    label: 'Key manager',
+    submenu: [
+      {
+        label: 'generate RSA',
+        click: async () => {
+          console.log(BrowserWindow.getAllWindows());
+          BrowserWindow.getAllWindows()[0].webContents.send('generateRSA');
+        }
+      },
+      {
+        label: 'get session key',
+        click: async () => {
+          BrowserWindow.getAllWindows()[0].webContents.send('getSessionKey');
+        }
+      },
+    ]
   }
 ];
 
