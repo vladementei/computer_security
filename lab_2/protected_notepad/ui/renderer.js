@@ -8,7 +8,7 @@ const keypair = require('keypair');
 const electron = require('electron')
 const axios = require('axios')
 const forge = require('node-forge');
-
+const utils = require('./utils');
 
 
 const rsaPair = keypair();
@@ -41,7 +41,7 @@ electron.ipcRenderer.on('openFile', (event, message) => {
     axios
         .get(url + 'file/' + message)
         .then(encryptedFile => {
-            document.getElementById('text').value = encryptedFile.data;
+            document.getElementById('text').value = utils.decrypt('abcd', encryptedFile.data);
         })
         .catch((error) => console.error(error))
 });
