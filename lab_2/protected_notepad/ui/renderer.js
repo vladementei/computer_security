@@ -42,7 +42,10 @@ electron.ipcRenderer.on('openFile', (event, message) => {
         .then(encryptedFile => {
             document.getElementById('text').value = utils.decrypt(window.localStorage.getItem('sessionKey'), encryptedFile.data);
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+            console.error(error);
+            document.getElementById('text').value = error.response.status === 404 ? "File not found!" : error;
+        })
 });
 
 electron.ipcRenderer.on('saveFile', (event, message) => {
